@@ -1,0 +1,28 @@
+{
+  "name": "passable-safety-card",
+  "version": "1.0.0",
+  "description": "Dynamic Home Assistant Lovelace safety command center for Smoke & CO detectors with auto-discovery, live diagnostics, and integrated controls.",
+  "main": "passable-safety-card.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/GBear09/passable-safety-card.git"
+  },
+  "keywords": [
+    "home-assistant",
+    "lovelace",
+    "custom-card",
+    "hacs",
+    "safety",
+    "smoke-detector",
+    "carbon-monoxide",
+    "x-sense",
+    "nest-protect",
+    "dashboard"
+  ],
+  "author": "GBear09",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/GBear09/passable-safety-card/issues"
+  },
+  "homepage": "https://github.com/GBear09/passable-safety-card#readme"
+}
