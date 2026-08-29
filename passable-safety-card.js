@@ -1,7 +1,7 @@
 /**
  * Passable Safety Card
  * Dynamic Smoke & CO Safety Command Center with Auto-Discovery, Diagnostics, and Controls.
- * Version 1.0.0
+ * Version 1.0.1
  * (c) 2026 GBear09
  */
 
@@ -11,40 +11,50 @@ import {
   css,
 } from "https://unpkg.com/lit@3.0.0/index.js?module";
 
-const CARD_VERSION = "1.0.0";
+const CARD_VERSION = "1.0.1";
 
 console.info(
   `%c PASSABLE-SAFETY-CARD %c v${CARD_VERSION} `,
-  "color: white; background: #e74c3c; font-weight: bold; padding: 2px 6px; border-radius: 3px 0 0 3px;",
-  "color: white; background: #2ecc71; font-weight: bold; padding: 2px 6px; border-radius: 0 3px 3px 0;"
+  "color: white; background: #2196f3; font-weight: bold; padding: 2px 6px; border-radius: 3px 0 0 3px;",
+  "color: white; background: #10b981; font-weight: bold; padding: 2px 6px; border-radius: 0 3px 3px 0;"
 );
 
-// --- INLINE ICONS (Lucide & MDI) ---
+// --- INLINE ICONS (Lucide & MDI matching Lock Manager Card) ---
 const Icons = {
-  ShieldCheck: html`<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 9.5-8 11-4.5-1.5-8-6-8-11V5l8-3 8 3v8Z"/><path d="m9 12 2 2 4-4"/></svg>`,
-  ShieldAlert: html`<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 9.5-8 11-4.5-1.5-8-6-8-11V5l8-3 8 3v8Z"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>`,
-  Flame: html`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>`,
-  Smoke: html`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/><path d="M8 19h8"/><path d="M10 22h4"/></svg>`,
-  CO: html`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>`,
-  Battery: html`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="16" height="10" x="2" y="7" rx="2" ry="2"/><line x1="22" x2="22" y1="11" y2="13"/></svg>`,
-  BatteryLow: html`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="16" height="10" x="2" y="7" rx="2" ry="2"/><line x1="22" x2="22" y1="11" y2="13"/><line x1="6" x2="6" y1="11" y2="13"/></svg>`,
-  VolumeX: html`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="22" x2="16" y1="9" y2="15"/><line x1="16" x2="22" y1="9" y2="15"/></svg>`,
-  Bell: html`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>`,
-  Siren: html`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 18v-6a5 5 0 1 1 10 0v6"/><path d="M5 21a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-1a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2z"/><line x1="21" x2="23" y1="12" y2="12"/><line x1="1" x2="3" y1="12" y2="12"/><line x1="19.07" x2="20.49" y1="4.93" y2="3.51"/><line x1="4.93" x2="3.51" y1="4.93" y2="3.51"/></svg>`,
-  ChevronDown: html`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>`,
-  ChevronUp: html`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>`,
-  CheckCircle: html`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>`,
+  ShieldCheck: html`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 9.5-8 11-4.5-1.5-8-6-8-11V5l8-3 8 3v8Z"/><path d="m9 12 2 2 4-4"/></svg>`,
+  ShieldAlert: html`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 9.5-8 11-4.5-1.5-8-6-8-11V5l8-3 8 3v8Z"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>`,
+  Flame: html`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>`,
+  Smoke: html`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/><path d="M8 19h8"/><path d="M10 22h4"/></svg>`,
+  CO: html`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>`,
+  Battery: html`<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="16" height="10" x="2" y="7" rx="2" ry="2"/><line x1="22" x2="22" y1="11" y2="13"/></svg>`,
+  BatteryLow: html`<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="16" height="10" x="2" y="7" rx="2" ry="2"/><line x1="22" x2="22" y1="11" y2="13"/><line x1="6" x2="6" y1="11" y2="13"/></svg>`,
+  VolumeX: html`<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="22" x2="16" y1="9" y2="15"/><line x1="16" x2="22" y1="9" y2="15"/></svg>`,
+  Bell: html`<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>`,
+  Siren: html`<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 18v-6a5 5 0 1 1 10 0v6"/><path d="M5 21a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-1a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2z"/><line x1="21" x2="23" y1="12" y2="12"/><line x1="1" x2="3" y1="12" y2="12"/><line x1="19.07" x2="20.49" y1="4.93" y2="3.51"/><line x1="4.93" x2="3.51" y1="4.93" y2="3.51"/></svg>`,
+  ChevronDown: html`<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>`,
+  ChevronUp: html`<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>`,
+  Check: html`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`,
   AlertTriangle: html`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" x2="12" y1="9" y2="13"/><line x1="12" x2="12.01" y1="17" y2="17"/></svg>`,
-  Sparkles: html`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>`
+  Settings: html`<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>`
 };
 
-// --- HELPER: Auto-format device names ---
-function formatFriendlyName(rawKey) {
-  let name = rawKey
+// --- HELPER: Format Room & Device Names cleanly ---
+function formatRoomName(rawKey) {
+  return rawKey
+    .replace(/_smoke_co$/, "")
+    .replace(/^nest_protect_/, "")
     .replace(/_s_/g, "'s ")
     .replace(/_/g, " ")
-    .replace(/\b\w/g, (l) => l.toUpperCase());
-  return name;
+    .split(" ")
+    .map(word => {
+      if (word.toLowerCase() === "'s") return "'s";
+      if (word.includes("'s")) {
+        const parts = word.split("'s");
+        return parts[0].charAt(0).toUpperCase() + parts[0].slice(1).toLowerCase() + "'s";
+      }
+      return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+    })
+    .join(" ");
 }
 
 // --- MAIN PASSABLE SAFETY CARD COMPONENT ---
@@ -72,6 +82,7 @@ export class PassableSafetyCard extends LitElement {
     }
     this.config = {
       title: "Smoke & CO Safety Center",
+      subtitle: "Safety & Life Protection Command Center",
       icon: "mdi:fire-alert",
       auto_discover: true,
       show_summary_banner: true,
@@ -86,6 +97,7 @@ export class PassableSafetyCard extends LitElement {
   static getStubConfig() {
     return {
       title: "Smoke & CO Safety Center",
+      subtitle: "Safety & Life Protection Command Center",
       icon: "mdi:fire-alert",
       auto_discover: true,
       show_summary_banner: true,
@@ -94,11 +106,10 @@ export class PassableSafetyCard extends LitElement {
     };
   }
 
-  // --- DISCOVERY ENGINE ---
+  // --- DISCOVERY ENGINE (De-duplicated & Precise) ---
   _discoverDevices() {
     if (!this.hass || !this.hass.states) return [];
 
-    // If manual devices provided and auto_discover is false, use manual list
     if (!this.config.auto_discover && this.config.devices && this.config.devices.length > 0) {
       return this.config.devices;
     }
@@ -106,12 +117,12 @@ export class PassableSafetyCard extends LitElement {
     const excludeList = this.config.exclude_entities || [];
     const devicesMap = new Map();
 
-    const getOrCreateDevice = (key, initialName, brand) => {
+    const getOrCreateDevice = (key, displayName, brand) => {
       if (!devicesMap.has(key)) {
         devicesMap.set(key, {
           id: key,
-          name: initialName,
-          room: initialName,
+          name: displayName,
+          room: formatRoomName(key),
           brand: brand || "standard",
           smoke_entity: null,
           co_entity: null,
@@ -135,25 +146,24 @@ export class PassableSafetyCard extends LitElement {
 
     const states = this.hass.states;
 
-    // 1. Primary Smoke / CO Detector Scan
+    // PASS 1: ONLY evaluate binary_sensor.* for physical detector discovery
     for (const [entityId, stateObj] of Object.entries(states)) {
       if (excludeList.includes(entityId)) continue;
-      // Skip global aggregate helper sensors
-      if (entityId.startsWith("binary_sensor.home_")) continue;
+      if (!entityId.startsWith("binary_sensor.")) continue; // Ignore numeric telemetry sensor.*
+      if (entityId.startsWith("binary_sensor.home_") || entityId.startsWith("binary_sensor.all_") || entityId === "binary_sensor.detector_low_battery") continue;
 
       const attrs = stateObj.attributes || {};
       const isSmoke =
         attrs.device_class === "smoke" ||
-        entityId.includes("smoke_status") ||
-        entityId.includes("smoke_co_alarm_status");
+        entityId.endsWith("_smoke_status") ||
+        entityId.endsWith("_smoke_co_alarm_status");
       const isCO =
         attrs.device_class === "carbon_monoxide" ||
-        entityId.includes("co_status");
+        entityId.endsWith("_co_status");
 
       if (isSmoke || isCO) {
         let key = "";
         let brand = "standard";
-        let rawName = attrs.friendly_name || entityId;
 
         // Pattern 1: X-Sense detectors (*_smoke_co_alarm_status)
         const xsenseMatch = entityId.match(/binary_sensor.(.*)_smoke_co_alarm_status/);
@@ -163,26 +173,28 @@ export class PassableSafetyCard extends LitElement {
         if (xsenseMatch) {
           key = xsenseMatch[1] + "_smoke_co";
           brand = "x-sense";
-          rawName = formatFriendlyName(xsenseMatch[1]) + " Smoke/CO Detector";
         } else if (nestMatch) {
           key = "nest_protect_" + nestMatch[1];
           brand = "nest";
-          rawName = formatFriendlyName(nestMatch[1]) + " Nest Protect";
         } else {
           key = entityId
             .replace("binary_sensor.", "")
             .replace(/_(smoke|co|alarm)_status/, "")
             .replace(/_(smoke|co)/, "");
-          rawName = rawName.replace(/ Smoke Status| CO Status| Alarm Status/gi, "");
         }
 
-        const dev = getOrCreateDevice(key, rawName, brand);
+        const roomName = formatRoomName(key);
+        const displayName = brand === "x-sense" 
+          ? `${roomName} Detector` 
+          : (brand === "nest" ? `${roomName} Nest Protect` : `${roomName} Safety Detector`);
+
+        const dev = getOrCreateDevice(key, displayName, brand);
         if (isSmoke && !dev.smoke_entity) dev.smoke_entity = entityId;
         if (isCO && !dev.co_entity) dev.co_entity = entityId;
       }
     }
 
-    // 2. Secondary Sibling Entity Mapping (Buttons, Sensors, Switches)
+    // PASS 2: Sibling Entity Mapping (Buttons, Numeric Telemetry, Battery, Switches)
     for (const [entityId, stateObj] of Object.entries(states)) {
       if (excludeList.includes(entityId)) continue;
 
@@ -266,8 +278,8 @@ export class PassableSafetyCard extends LitElement {
 
     if (this.config.confirm_drills !== false) {
       this._confirmDialog = {
-        title: "Sound Alarm Drill?",
-        message: `Are you sure you want to trigger a loud alarm drill for ${dev.name}? All connected sirens will sound.`,
+        title: "Trigger Alarm Drill?",
+        message: `Are you sure you want to sound an alarm drill for ${dev.name}? All interconnected sirens will sound.`,
         action: () => this._callButton(dev.drill_button, "Alarm Drill")
       };
       this.requestUpdate();
@@ -311,7 +323,7 @@ export class PassableSafetyCard extends LitElement {
 
   // --- RENDER ---
   render() {
-    if (!this.hass) return html``;
+    if (!this.hass) return html`<div class="loading">Loading...</div>`;
 
     const devices = this._discoverDevices();
 
@@ -346,72 +358,80 @@ export class PassableSafetyCard extends LitElement {
       }
     });
 
-    // Check optional global aggregate entities if defined
+    // Global Aggregate Entity sync
     if (this.hass.states["binary_sensor.home_smoke_status"]?.state === "on") activeSmokeCount = Math.max(activeSmokeCount, 1);
     if (this.hass.states["binary_sensor.home_co_status"]?.state === "on") activeCOCount = Math.max(activeCOCount, 1);
     if (this.hass.states["binary_sensor.detector_low_battery"]?.state === "on") lowBatteryCount = Math.max(lowBatteryCount, 1);
 
-    // Global Safety State
-    let safetyLevel = "safe"; // 'safe' | 'smoke' | 'co' | 'battery'
-    if (activeSmokeCount > 0) safetyLevel = "smoke";
-    else if (activeCOCount > 0) safetyLevel = "co";
-    else if (lowBatteryCount > 0) safetyLevel = "battery";
+    const title = this.config.title || "Smoke & CO Safety Center";
+    const subtitle = this.config.subtitle || `${devices.length} Monitored Detectors`;
 
     return html`
       <ha-card>
-        <!-- Header -->
-        <div class="card-header">
-          <div class="header-title-container">
-            <ha-icon class="header-icon" icon="${this.config.icon || 'mdi:fire-alert'}"></ha-icon>
-            <div class="header-text">
-              <span class="main-title">${this.config.title || 'Smoke & CO Safety Center'}</span>
-              <span class="sub-title">${devices.length} Monitored Detectors</span>
+        <div class="view fade-in">
+          <!-- Main Card Header matching Lock Manager -->
+          <div class="header">
+            <div>
+              <h1 class="title">${title}</h1>
+              <p class="subtitle">${subtitle}</p>
+            </div>
+
+            <div class="header-right">
+              ${activeSmokeCount > 0
+                ? html`<span class="status-pill smoke">${Icons.Flame} Smoke Alert</span>`
+                : (activeCOCount > 0
+                  ? html`<span class="status-pill co">${Icons.CO} CO Alert</span>`
+                  : (lowBatteryCount > 0
+                    ? html`<span class="status-pill battery">${Icons.BatteryLow} Low Battery</span>`
+                    : html`<span class="status-pill safe">${Icons.ShieldCheck} All Clear</span>`
+                  )
+                )
+              }
             </div>
           </div>
-          <div class="header-badge ${safetyLevel}">
-            ${safetyLevel === 'safe' ? html`${Icons.ShieldCheck} <span>ALL CLEAR</span>` : ''}
-            ${safetyLevel === 'smoke' ? html`${Icons.Flame} <span class="pulse-text">SMOKE ALERT</span>` : ''}
-            ${safetyLevel === 'co' ? html`${Icons.CO} <span class="pulse-text">CO ALERT</span>` : ''}
-            ${safetyLevel === 'battery' ? html`${Icons.BatteryLow} <span>LOW BATTERY</span>` : ''}
-          </div>
-        </div>
 
-        <!-- Summary Banner -->
-        ${this.config.show_summary_banner !== false ? html`
-          <div class="summary-banner ${safetyLevel}">
-            <div class="summary-pill ${activeSmokeCount > 0 ? 'alert-smoke' : 'normal'}">
-              <div class="pill-icon">${Icons.Smoke}</div>
-              <div class="pill-data">
-                <span class="pill-label">Smoke Status</span>
-                <span class="pill-value">${activeSmokeCount > 0 ? `${activeSmokeCount} Alerting` : 'All Clear'}</span>
+          <!-- Hero Summary Metrics Row -->
+          ${this.config.show_summary_banner !== false ? html`
+            <div class="summary-grid">
+              <div class="summary-stat-box ${activeSmokeCount > 0 ? 'alert' : 'normal'}">
+                <div class="stat-icon-box ${activeSmokeCount > 0 ? 'alert' : 'normal'}">
+                  ${activeSmokeCount > 0 ? Icons.Flame : Icons.Smoke}
+                </div>
+                <div class="stat-text-area">
+                  <span class="stat-label">Smoke Status</span>
+                  <span class="stat-value">${activeSmokeCount > 0 ? `${activeSmokeCount} Alerting` : 'All Clear'}</span>
+                </div>
+              </div>
+
+              <div class="summary-stat-box ${activeCOCount > 0 ? 'alert' : 'normal'}">
+                <div class="stat-icon-box ${activeCOCount > 0 ? 'alert' : 'normal'}">
+                  ${Icons.CO}
+                </div>
+                <div class="stat-text-area">
+                  <span class="stat-label">Carbon Monoxide</span>
+                  <span class="stat-value">${activeCOCount > 0 ? `${activeCOCount} Detected` : '0 ppm Clear'}</span>
+                </div>
+              </div>
+
+              <div class="summary-stat-box ${lowBatteryCount > 0 ? 'warning' : 'normal'}">
+                <div class="stat-icon-box ${lowBatteryCount > 0 ? 'warning' : 'normal'}">
+                  ${lowBatteryCount > 0 ? Icons.BatteryLow : Icons.Battery}
+                </div>
+                <div class="stat-text-area">
+                  <span class="stat-label">Battery Health</span>
+                  <span class="stat-value">${lowBatteryCount > 0 ? `${lowBatteryCount} Low` : 'All Healthy'}</span>
+                </div>
               </div>
             </div>
+          ` : ''}
 
-            <div class="summary-pill ${activeCOCount > 0 ? 'alert-co' : 'normal'}">
-              <div class="pill-icon">${Icons.CO}</div>
-              <div class="pill-data">
-                <span class="pill-label">Carbon Monoxide</span>
-                <span class="pill-value">${activeCOCount > 0 ? `${activeCOCount} Detected` : '0 ppm Clear'}</span>
-              </div>
-            </div>
-
-            <div class="summary-pill ${lowBatteryCount > 0 ? 'alert-battery' : 'normal'}">
-              <div class="pill-icon">${lowBatteryCount > 0 ? Icons.BatteryLow : Icons.Battery}</div>
-              <div class="pill-data">
-                <span class="pill-label">Battery Health</span>
-                <span class="pill-value">${lowBatteryCount > 0 ? `${lowBatteryCount} Low` : 'All Healthy'}</span>
-              </div>
-            </div>
-          </div>
-        ` : ''}
-
-        <!-- Detector Grid -->
-        <div class="devices-section">
-          <div class="section-title">
-            <span>Discovered Detectors</span>
-            <span class="device-count-chip">${devices.length}</span>
+          <!-- Discovered Detectors Section Header -->
+          <div class="section-label-row">
+            <span class="section-label-text">Discovered Detectors</span>
+            <span class="slots-badge-counter">${devices.length} Devices</span>
           </div>
 
+          <!-- Discovered Detectors Grid -->
           <div class="devices-grid">
             ${devices.map((dev) => this._renderDeviceCard(dev))}
           </div>
@@ -446,7 +466,7 @@ export class PassableSafetyCard extends LitElement {
     const silencedObj = dev.silenced_entity ? this.hass.states[dev.silenced_entity] : null;
     const isExpanded = !!this._expandedDevices[dev.id];
 
-    // Status flags
+    // Status Calculations
     const isSmokeAlert = smokeStateObj && (smokeStateObj.state === "on" || smokeStateObj.state === "smoke");
     const coPpm = coReadingObj ? parseFloat(coReadingObj.state) : null;
     const isCoAlert = (coStateObj && (coStateObj.state === "on" || coStateObj.state === "carbon_monoxide")) || (coPpm !== null && coPpm >= 30);
@@ -455,136 +475,182 @@ export class PassableSafetyCard extends LitElement {
     let batteryPercent = batteryObj && !isNaN(parseFloat(batteryObj.state)) ? Math.round(parseFloat(batteryObj.state)) : null;
     const isBatteryLow = (batteryPercent !== null && batteryPercent <= 20) || (batteryHealthObj && ["on", "problem", "low"].includes(batteryHealthObj.state));
 
-    let cardStatusClass = "normal";
-    if (isSmokeAlert) cardStatusClass = "alarm-smoke";
-    else if (isCoAlert) cardStatusClass = "alarm-co";
-    else if (isBatteryLow) cardStatusClass = "alarm-battery";
+    let cardStatus = "normal";
+    if (isSmokeAlert) cardStatus = "alarm-smoke";
+    else if (isCoAlert) cardStatus = "alarm-co";
+    else if (isBatteryLow) cardStatus = "warning-battery";
 
     return html`
-      <div class="device-card ${cardStatusClass}">
-        <!-- Device Header -->
-        <div class="device-header" @click=${(ev) => this._handleMoreInfo(dev.smoke_entity || dev.co_entity, ev)}>
-          <div class="device-icon-container ${cardStatusClass}">
+      <div class="door-card ${cardStatus}">
+        <!-- Device Card Header matching Lock Manager -->
+        <div class="door-card-header" @click=${(ev) => this._handleMoreInfo(dev.smoke_entity || dev.co_entity, ev)}>
+          <div class="door-icon-wrapper ${cardStatus === 'normal' ? 'locked' : (cardStatus.startsWith('alarm') ? 'jammed' : 'unlocked')}">
             ${isSmokeAlert ? Icons.Flame : (isCoAlert ? Icons.CO : Icons.ShieldCheck)}
           </div>
-          <div class="device-title-area">
-            <div class="device-name">${dev.name}</div>
-            <div class="device-brand-badge">${dev.brand === 'x-sense' ? 'X-Sense' : (dev.brand === 'nest' ? 'Nest Protect' : 'Safety Detector')}</div>
+          <div class="door-title-wrapper">
+            <h3 class="door-name">${dev.name}</h3>
+            <span class="door-time">
+              ${dev.brand === 'x-sense' ? 'X-Sense Wireless Multi-Sensor' : (dev.brand === 'nest' ? 'Nest Protect Smart Sensor' : 'Smoke & CO Sensor')}
+            </span>
           </div>
-          ${isSilenced ? html`
-            <div class="silenced-badge" title="Device Silenced / Hush Active">
-              ${Icons.VolumeX} <span>Muted</span>
+
+          <div class="header-pills-area">
+            ${isSilenced ? html`
+              <div class="battery-pill warning" title="Detector Silenced / Hush Active">
+                ${Icons.VolumeX} <span>Muted</span>
+              </div>
+            ` : ''}
+
+            ${batteryPercent !== null ? html`
+              <div class="battery-pill ${batteryPercent <= 20 ? 'critical' : (batteryPercent <= 50 ? 'warning' : 'good')}" title="Battery: ${batteryPercent}%">
+                ${Icons.Battery}
+                <span>${batteryPercent}%</span>
+              </div>
+            ` : (batteryHealthObj ? html`
+              <div class="battery-pill ${isBatteryLow ? 'critical' : 'good'}">
+                ${isBatteryLow ? Icons.BatteryLow : Icons.Battery}
+                <span>${isBatteryLow ? 'Low' : 'Healthy'}</span>
+              </div>
+            ` : '')}
+          </div>
+        </div>
+
+        <!-- Badges Status Row matching Lock Manager -->
+        <div class="badge-container">
+          <!-- Smoke Status Badge -->
+          <div class="badge ${isSmokeAlert ? 'danger' : 'success'}" @click=${(ev) => this._handleMoreInfo(dev.smoke_entity, ev)}>
+            ${isSmokeAlert ? Icons.Flame : Icons.Smoke}
+            <span>${isSmokeAlert ? 'Smoke Alarm' : 'Smoke Clear'}</span>
+          </div>
+
+          <!-- CO Status Badge -->
+          <div class="badge ${isCoAlert ? 'danger' : 'success'}" @click=${(ev) => this._handleMoreInfo(dev.co_reading_entity || dev.co_entity, ev)}>
+            ${Icons.CO}
+            <span>${isCoAlert ? `CO Alarm (${coPpm || 'High'} ppm)` : (coPpm !== null ? `CO: ${coPpm} ppm` : 'CO Clear')}</span>
+          </div>
+
+          ${dev.heat_entity && this.hass.states[dev.heat_entity] ? html`
+            <div class="badge ${this.hass.states[dev.heat_entity].state === 'on' ? 'danger' : 'info'}" @click=${(ev) => this._handleMoreInfo(dev.heat_entity, ev)}>
+              ${Icons.Flame}
+              <span>${this.hass.states[dev.heat_entity].state === 'on' ? 'Heat Warning' : 'Heat Normal'}</span>
             </div>
           ` : ''}
         </div>
 
-        <!-- Metrics / Status Row -->
-        <div class="device-metrics-row">
-          <!-- Smoke Status -->
-          <div class="metric-badge ${isSmokeAlert ? 'badge-alert' : 'badge-ok'}" @click=${(ev) => this._handleMoreInfo(dev.smoke_entity, ev)}>
-            <span class="metric-icon">${Icons.Smoke}</span>
-            <span class="metric-text">${isSmokeAlert ? 'Smoke Alarm' : 'Smoke Clear'}</span>
-          </div>
-
-          <!-- CO Status -->
-          <div class="metric-badge ${isCoAlert ? 'badge-alert' : 'badge-ok'}" @click=${(ev) => this._handleMoreInfo(dev.co_reading_entity || dev.co_entity, ev)}>
-            <span class="metric-icon">${Icons.CO}</span>
-            <span class="metric-text">${isCoAlert ? `CO Alert (${coPpm || 'High'} ppm)` : (coPpm !== null ? `CO 0 ppm` : 'CO Clear')}</span>
-          </div>
-
-          <!-- Battery Status -->
-          ${(batteryPercent !== null || batteryHealthObj) && this.config.show_battery_gauges !== false ? html`
-            <div class="metric-badge ${isBatteryLow ? 'badge-warning' : 'badge-ok'}" @click=${(ev) => this._handleMoreInfo(dev.battery_entity || dev.battery_health_entity, ev)}>
-              <span class="metric-icon">${isBatteryLow ? Icons.BatteryLow : Icons.Battery}</span>
-              <span class="metric-text">${batteryPercent !== null ? `${batteryPercent}%` : (isBatteryLow ? 'Low' : 'Healthy')}</span>
-            </div>
-          ` : ''}
-        </div>
-
-        <!-- Action Controls (Mute, Test, Drill) -->
+        <!-- Interactive Control Buttons (Mute, Test, Drill) -->
         ${dev.mute_button || dev.test_button || dev.drill_button ? html`
-          <div class="device-actions-row">
+          <div class="door-action-row">
             ${dev.mute_button ? html`
               <button
-                class="action-btn btn-mute ${this._actionLoading[dev.mute_button] ? 'loading' : ''}"
+                class="control-btn btn-mute ${this._actionLoading[dev.mute_button] ? 'loading' : ''}"
                 @click=${(ev) => this._handleMute(ev, dev)}
-                title="Silence / Mute Detector Alarm">
-                ${Icons.VolumeX}
-                <span>Mute</span>
+                title="Silence / Mute Alarm">
+                <div class="btn-icon">${Icons.VolumeX}</div>
+                <div class="btn-text">
+                  <span class="btn-action-label">Mute</span>
+                  <span class="btn-sub-label">Silence siren</span>
+                </div>
               </button>
             ` : ''}
 
             ${dev.test_button ? html`
               <button
-                class="action-btn btn-test ${this._actionLoading[dev.test_button] ? 'loading' : ''}"
+                class="control-btn btn-test ${this._actionLoading[dev.test_button] ? 'loading' : ''}"
                 @click=${(ev) => this._handleTest(ev, dev)}
-                title="Run Device Self-Test">
-                ${Icons.Bell}
-                <span>Test</span>
+                title="Run Self-Test">
+                <div class="btn-icon">${Icons.Bell}</div>
+                <div class="btn-text">
+                  <span class="btn-action-label">Test</span>
+                  <span class="btn-sub-label">Run self-test</span>
+                </div>
               </button>
             ` : ''}
 
             ${dev.drill_button ? html`
               <button
-                class="action-btn btn-drill ${this._actionLoading[dev.drill_button] ? 'loading' : ''}"
+                class="control-btn btn-drill ${this._actionLoading[dev.drill_button] ? 'loading' : ''}"
                 @click=${(ev) => this._handleDrillClick(ev, dev)}
-                title="Sound Loud Alarm Drill">
-                ${Icons.Siren}
-                <span>Drill</span>
+                title="Trigger Alarm Drill">
+                <div class="btn-icon">${Icons.Siren}</div>
+                <div class="btn-text">
+                  <span class="btn-action-label">Drill</span>
+                  <span class="btn-sub-label">Sound sirens</span>
+                </div>
               </button>
             ` : ''}
           </div>
         ` : ''}
 
-        <!-- Expandable Diagnostics Drawer Toggle -->
+        <!-- Collapsible Diagnostics Bar matching Lock Manager expand-bar -->
         ${dev.test_time_sensor || dev.replace_by_sensor || dev.test_result_sensor || dev.switches.length > 0 ? html`
-          <div class="device-drawer-toggle" @click=${(ev) => this._toggleExpand(dev.id, ev)}>
-            <span>${isExpanded ? 'Hide Details' : 'Diagnostics & Settings'}</span>
-            ${isExpanded ? Icons.ChevronUp : Icons.ChevronDown}
+          <div class="activity-expand-bar ${isExpanded ? 'open' : ''}" @click=${(ev) => this._toggleExpand(dev.id, ev)}>
+            <div class="expand-bar-left">
+              ${Icons.Settings}
+              <span>Diagnostics & Settings</span>
+            </div>
+            <div class="expand-chevron">
+              ${isExpanded ? Icons.ChevronUp : Icons.ChevronDown}
+            </div>
           </div>
 
           ${isExpanded ? html`
-            <div class="device-drawer-content">
-              ${dev.test_time_sensor && this.hass.states[dev.test_time_sensor] ? html`
-                <div class="drawer-row">
-                  <span class="drawer-label">Last Self-Test:</span>
-                  <span class="drawer-value">${this.hass.states[dev.test_time_sensor].state}</span>
-                </div>
-              ` : ''}
-
-              ${dev.test_result_sensor && this.hass.states[dev.test_result_sensor] ? html`
-                <div class="drawer-row">
-                  <span class="drawer-label">Test Result:</span>
-                  <span class="drawer-value">${this.hass.states[dev.test_result_sensor].state}</span>
-                </div>
-              ` : ''}
-
-              ${dev.replace_by_sensor && this.hass.states[dev.replace_by_sensor] ? html`
-                <div class="drawer-row">
-                  <span class="drawer-label">Replace By:</span>
-                  <span class="drawer-value">${this.hass.states[dev.replace_by_sensor].state}</span>
-                </div>
-              ` : ''}
-
-              ${dev.switches.map((switchEntityId) => {
-                const switchObj = this.hass.states[switchEntityId];
-                if (!switchObj) return '';
-                const isOn = switchObj.state === 'on';
-                const label = switchObj.attributes.friendly_name || switchEntityId;
-                return html`
-                  <div class="drawer-row switch-row">
-                    <span class="drawer-label">${label}:</span>
-                    <button
-                      class="switch-pill ${isOn ? 'active' : ''}"
-                      @click=${(ev) => {
-                        ev.stopPropagation();
-                        this.hass.callService("homeassistant", "toggle", { entity_id: switchEntityId });
-                      }}>
-                      ${isOn ? 'ON' : 'OFF'}
-                    </button>
+            <div class="event-feed-container">
+              <div class="drawer-grid">
+                ${dev.test_time_sensor && this.hass.states[dev.test_time_sensor] ? html`
+                  <div class="event-row">
+                    <div class="event-details">
+                      <div class="event-top-line">
+                        <span class="event-door-badge">Self Test</span>
+                        <span class="event-action">${this.hass.states[dev.test_time_sensor].state}</span>
+                      </div>
+                    </div>
                   </div>
-                `;
-              })}
+                ` : ''}
+
+                ${dev.test_result_sensor && this.hass.states[dev.test_result_sensor] ? html`
+                  <div class="event-row">
+                    <div class="event-details">
+                      <div class="event-top-line">
+                        <span class="event-door-badge">Test Result</span>
+                        <span class="event-action">${this.hass.states[dev.test_result_sensor].state}</span>
+                      </div>
+                    </div>
+                  </div>
+                ` : ''}
+
+                ${dev.replace_by_sensor && this.hass.states[dev.replace_by_sensor] ? html`
+                  <div class="event-row">
+                    <div class="event-details">
+                      <div class="event-top-line">
+                        <span class="event-door-badge">Replace By</span>
+                        <span class="event-action">${this.hass.states[dev.replace_by_sensor].state}</span>
+                      </div>
+                    </div>
+                  </div>
+                ` : ''}
+
+                ${dev.switches.map((switchEntityId) => {
+                  const switchObj = this.hass.states[switchEntityId];
+                  if (!switchObj) return '';
+                  const isOn = switchObj.state === 'on';
+                  const label = switchObj.attributes.friendly_name || switchEntityId;
+                  return html`
+                    <div class="event-row switch-row">
+                      <div class="event-details">
+                        <span class="drawer-label">${label}</span>
+                      </div>
+                      <button
+                        class="switch-pill ${isOn ? 'active' : ''}"
+                        @click=${(ev) => {
+                          ev.stopPropagation();
+                          this.hass.callService("homeassistant", "toggle", { entity_id: switchEntityId });
+                        }}>
+                        ${isOn ? 'ON' : 'OFF'}
+                      </button>
+                    </div>
+                  `;
+                })}
+              </div>
             </div>
           ` : ''}
         ` : ''}
@@ -592,16 +658,16 @@ export class PassableSafetyCard extends LitElement {
     `;
   }
 
-  // --- STYLES ---
+  // --- CSS STYLES (Matching Passable Lock Manager Card) ---
   static get styles() {
     return css`
       :host {
         display: block;
       }
       ha-card {
-        padding: 18px;
+        padding: 16px;
         background: var(--ha-card-background, var(--card-background-color, #1e1e24));
-        border-radius: var(--ha-card-border-radius, 16px);
+        border-radius: var(--ha-card-border-radius, 12px);
         border: 1px solid var(--divider-color, rgba(255, 255, 255, 0.08));
         box-shadow: var(--ha-card-box-shadow, 0 4px 20px rgba(0, 0, 0, 0.25));
         color: var(--primary-text-color, #ffffff);
@@ -610,367 +676,457 @@ export class PassableSafetyCard extends LitElement {
         font-family: var(--paper-font-body1_-_font-family, system-ui, -apple-system, sans-serif);
       }
 
-      /* Header */
-      .card-header {
+      .view {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+      }
+      .fade-in {
+        animation: fadeIn 0.25s ease-in-out forwards;
+      }
+
+      /* Header matching Lock Manager */
+      .header {
         display: flex;
         justify-content: space-between;
-        align-items: center;
-        margin-bottom: 16px;
-        gap: 12px;
+        align-items: flex-start;
       }
-      .header-title-container {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-      }
-      .header-icon {
-        color: var(--primary-color, #3498db);
-        --mdc-icon-size: 28px;
-      }
-      .header-text {
-        display: flex;
-        flex-direction: column;
-      }
-      .main-title {
-        font-size: 1.25rem;
+      .title {
+        font-size: 20px;
         font-weight: 600;
         letter-spacing: -0.01em;
+        margin: 0;
+        color: var(--primary-text-color);
       }
-      .sub-title {
-        font-size: 0.8rem;
-        color: var(--secondary-text-color, rgba(255, 255, 255, 0.6));
+      .subtitle {
+        font-size: 12px;
+        color: var(--secondary-text-color, #757575);
+        margin: 2px 0 0 0;
       }
-      .header-badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        padding: 6px 12px;
-        border-radius: 20px;
-        font-size: 0.8rem;
-        font-weight: 600;
-        letter-spacing: 0.04em;
-        text-transform: uppercase;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-      }
-      .header-badge.safe {
-        background: rgba(46, 204, 113, 0.15);
-        color: #2ecc71;
-        border: 1px solid rgba(46, 204, 113, 0.3);
-      }
-      .header-badge.smoke, .header-badge.co {
-        background: rgba(231, 76, 60, 0.25);
-        color: #e74c3c;
-        border: 1px solid #e74c3c;
-        animation: pulseAlert 1.5s infinite;
-      }
-      .header-badge.battery {
-        background: rgba(241, 196, 15, 0.2);
-        color: #f1c40f;
-        border: 1px solid rgba(241, 196, 15, 0.4);
-      }
-
-      /* Summary Banner */
-      .summary-banner {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-        gap: 10px;
-        padding: 12px;
-        background: var(--secondary-background-color, rgba(255, 255, 255, 0.03));
-        border-radius: 12px;
-        margin-bottom: 18px;
-        border: 1px solid var(--divider-color, rgba(255, 255, 255, 0.05));
-      }
-      .summary-pill {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        padding: 8px 10px;
-        border-radius: 8px;
-        background: rgba(255, 255, 255, 0.02);
-      }
-      .summary-pill.alert-smoke, .summary-pill.alert-co {
-        background: rgba(231, 76, 60, 0.18);
-        border: 1px solid rgba(231, 76, 60, 0.4);
-      }
-      .summary-pill.alert-battery {
-        background: rgba(241, 196, 15, 0.15);
-        border: 1px solid rgba(241, 196, 15, 0.3);
-      }
-      .pill-icon {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: var(--primary-text-color, #ffffff);
-      }
-      .summary-pill.alert-smoke .pill-icon, .summary-pill.alert-co .pill-icon {
-        color: #e74c3c;
-      }
-      .summary-pill.alert-battery .pill-icon {
-        color: #f1c40f;
-      }
-      .pill-data {
-        display: flex;
-        flex-direction: column;
-      }
-      .pill-label {
-        font-size: 0.72rem;
-        color: var(--secondary-text-color, rgba(255, 255, 255, 0.6));
-        text-transform: uppercase;
-        letter-spacing: 0.03em;
-      }
-      .pill-value {
-        font-size: 0.92rem;
-        font-weight: 600;
-      }
-
-      /* Discovered Devices Section */
-      .devices-section {
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-      }
-      .section-title {
+      .header-right {
         display: flex;
         align-items: center;
         gap: 8px;
-        font-size: 0.95rem;
+      }
+
+      /* Global Status Pills */
+      .status-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 12px;
         font-weight: 600;
-        color: var(--secondary-text-color, rgba(255, 255, 255, 0.7));
+        padding: 4px 10px;
+        border-radius: 20px;
         text-transform: uppercase;
         letter-spacing: 0.05em;
       }
-      .device-count-chip {
-        background: var(--primary-color, #3498db);
-        color: white;
-        font-size: 0.7rem;
-        padding: 2px 7px;
-        border-radius: 10px;
-        font-weight: 700;
+      .status-pill.safe {
+        background-color: rgba(var(--rgb-success-color, 76, 175, 80), 0.15);
+        color: var(--success-color, #4caf50);
+        border: 1px solid rgba(var(--rgb-success-color, 76, 175, 80), 0.3);
+      }
+      .status-pill.smoke, .status-pill.co {
+        background-color: rgba(var(--rgb-error-color, 244, 67, 54), 0.2);
+        color: var(--error-color, #f44336);
+        border: 1px solid var(--error-color, #f44336);
+        animation: pulseAlert 1.5s infinite;
+      }
+      .status-pill.battery {
+        background-color: rgba(var(--rgb-warning-color, 255, 152, 0), 0.15);
+        color: var(--warning-color, #ff9800);
+        border: 1px solid rgba(var(--rgb-warning-color, 255, 152, 0), 0.3);
       }
 
-      /* Device Grid & Cards */
-      .devices-grid {
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
+      /* Hero Summary Grid */
+      .summary-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+        gap: 8px;
       }
-      .device-card {
-        padding: 14px;
-        background: var(--secondary-background-color, rgba(255, 255, 255, 0.04));
-        border-radius: 12px;
-        border: 1px solid var(--divider-color, rgba(255, 255, 255, 0.06));
-        transition: all 0.2s ease;
-      }
-      .device-card:hover {
-        background: rgba(255, 255, 255, 0.06);
-        border-color: rgba(255, 255, 255, 0.12);
-      }
-      .device-card.alarm-smoke, .device-card.alarm-co {
-        border-color: #e74c3c;
-        background: rgba(231, 76, 60, 0.1);
-        box-shadow: 0 0 15px rgba(231, 76, 60, 0.2);
-      }
-
-      /* Device Header */
-      .device-header {
+      .summary-stat-box {
         display: flex;
         align-items: center;
         gap: 10px;
-        cursor: pointer;
-        margin-bottom: 12px;
+        padding: 10px 12px;
+        border-radius: 8px;
+        background-color: rgba(255, 255, 255, 0.02);
+        border: 1px solid var(--divider-color, rgba(255, 255, 255, 0.06));
+        transition: all 0.2s;
       }
-      .device-icon-container {
-        width: 38px;
-        height: 38px;
+      .summary-stat-box.alert {
+        background-color: rgba(var(--rgb-error-color, 244, 67, 54), 0.12);
+        border-color: rgba(var(--rgb-error-color, 244, 67, 54), 0.4);
+      }
+      .summary-stat-box.warning {
+        background-color: rgba(var(--rgb-warning-color, 255, 152, 0), 0.12);
+        border-color: rgba(var(--rgb-warning-color, 255, 152, 0), 0.3);
+      }
+      .stat-icon-box {
+        width: 30px;
+        height: 30px;
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
-        background: rgba(255, 255, 255, 0.05);
-        color: #2ecc71;
+        background-color: rgba(255, 255, 255, 0.05);
+        color: var(--primary-text-color);
         flex-shrink: 0;
       }
-      .device-icon-container.alarm-smoke, .device-icon-container.alarm-co {
-        background: rgba(231, 76, 60, 0.2);
-        color: #e74c3c;
-        animation: pulseAlert 1.5s infinite;
+      .stat-icon-box.alert {
+        background-color: rgba(var(--rgb-error-color, 244, 67, 54), 0.2);
+        color: var(--error-color, #f44336);
       }
-      .device-title-area {
-        flex: 1;
+      .stat-icon-box.warning {
+        background-color: rgba(var(--rgb-warning-color, 255, 152, 0), 0.2);
+        color: var(--warning-color, #ff9800);
+      }
+      .stat-text-area {
         display: flex;
         flex-direction: column;
       }
-      .device-name {
-        font-size: 1rem;
-        font-weight: 600;
+      .stat-label {
+        font-size: 11px;
+        color: var(--secondary-text-color, #757575);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
       }
-      .device-brand-badge {
-        font-size: 0.72rem;
-        color: var(--secondary-text-color, rgba(255, 255, 255, 0.5));
-      }
-      .silenced-badge {
-        display: flex;
-        align-items: center;
-        gap: 4px;
-        background: rgba(241, 196, 15, 0.2);
-        color: #f1c40f;
-        padding: 3px 8px;
-        border-radius: 12px;
-        font-size: 0.75rem;
+      .stat-value {
+        font-size: 13px;
         font-weight: 600;
+        color: var(--primary-text-color);
       }
 
-      /* Metrics Row */
-      .device-metrics-row {
+      /* Section Labels matching Lock Manager */
+      .section-label-row {
         display: flex;
-        flex-wrap: wrap;
-        gap: 8px;
-        margin-bottom: 12px;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 4px;
       }
-      .metric-badge {
-        display: inline-flex;
+      .section-label-text {
+        font-size: 11px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--secondary-text-color, #757575);
+      }
+      .slots-badge-counter {
+        font-size: 12px;
+        font-weight: 500;
+        color: var(--secondary-text-color, #757575);
+      }
+
+      /* Discovered Detectors Grid */
+      .devices-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      /* Door/Detector Card matching Lock Manager */
+      .door-card {
+        padding: 14px;
+        border-radius: var(--ha-card-border-radius, 8px);
+        background-color: var(--secondary-background-color, rgba(255, 255, 255, 0.02));
+        border: 1px solid var(--divider-color, rgba(255, 255, 255, 0.08));
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      .door-card:hover {
+        border-color: var(--primary-color, #2196f3);
+        background-color: rgba(var(--rgb-primary-color, 33, 150, 243), 0.03);
+      }
+      .door-card.alarm-smoke, .door-card.alarm-co {
+        background-color: rgba(var(--rgb-error-color, 244, 67, 54), 0.08);
+        border-color: var(--error-color, #f44336);
+        box-shadow: 0 0 12px rgba(var(--rgb-error-color, 244, 67, 54), 0.25);
+      }
+      .door-card.warning-battery {
+        border-color: rgba(var(--rgb-warning-color, 255, 152, 0), 0.4);
+      }
+
+      /* Door Card Header matching Lock Manager */
+      .door-card-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        cursor: pointer;
+      }
+      .door-icon-wrapper {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+      }
+      .door-icon-wrapper.locked {
+        background-color: rgba(var(--rgb-success-color, 76, 175, 80), 0.15);
+        color: var(--success-color, #4caf50);
+      }
+      .door-icon-wrapper.unlocked {
+        background-color: rgba(var(--rgb-warning-color, 255, 152, 0), 0.15);
+        color: var(--warning-color, #ff9800);
+      }
+      .door-icon-wrapper.jammed {
+        background-color: rgba(var(--rgb-error-color, 244, 67, 54), 0.2);
+        color: var(--error-color, #f44336);
+        animation: pulseAlert 1.5s infinite;
+      }
+      .door-title-wrapper {
+        flex: 1;
+        min-width: 0;
+      }
+      .door-name {
+        font-size: 15px;
+        font-weight: 600;
+        margin: 0;
+        color: var(--primary-text-color);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .door-time {
+        font-size: 11px;
+        color: var(--secondary-text-color, #757575);
+        display: block;
+        margin-top: 1px;
+      }
+      .header-pills-area {
+        display: flex;
         align-items: center;
         gap: 6px;
-        padding: 5px 10px;
-        border-radius: 8px;
-        font-size: 0.8rem;
-        font-weight: 500;
+        flex-shrink: 0;
+      }
+
+      /* Battery Pill matching Lock Manager */
+      .battery-pill {
+        font-size: 11px;
+        padding: 3px 8px;
+        border-radius: 12px;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+      }
+      .battery-pill.good {
+        background-color: rgba(var(--rgb-success-color, 76, 175, 80), 0.15);
+        color: var(--success-color, #4caf50);
+      }
+      .battery-pill.warning {
+        background-color: rgba(var(--rgb-warning-color, 255, 152, 0), 0.15);
+        color: var(--warning-color, #ff9800);
+      }
+      .battery-pill.critical {
+        background-color: rgba(var(--rgb-error-color, 244, 67, 54), 0.2);
+        color: var(--error-color, #f44336);
+      }
+
+      /* Badges Container matching Lock Manager */
+      .badge-container {
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+      }
+      .badge {
+        font-size: 11px;
+        padding: 3px 8px;
+        border-radius: 12px;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
         cursor: pointer;
         transition: opacity 0.2s;
       }
-      .metric-badge:hover {
+      .badge:hover {
         opacity: 0.85;
       }
-      .metric-badge.badge-ok {
-        background: rgba(46, 204, 113, 0.12);
-        color: #2ecc71;
-        border: 1px solid rgba(46, 204, 113, 0.25);
+      .badge.success {
+        background-color: rgba(var(--rgb-success-color, 76, 175, 80), 0.15);
+        color: var(--success-color, #4caf50);
       }
-      .metric-badge.badge-alert {
-        background: rgba(231, 76, 60, 0.2);
-        color: #e74c3c;
-        border: 1px solid #e74c3c;
-        font-weight: 700;
+      .badge.warning {
+        background-color: rgba(var(--rgb-warning-color, 255, 152, 0), 0.15);
+        color: var(--warning-color, #ff9800);
       }
-      .metric-badge.badge-warning {
-        background: rgba(241, 196, 15, 0.18);
-        color: #f1c40f;
-        border: 1px solid rgba(241, 196, 15, 0.35);
+      .badge.danger {
+        background-color: rgba(var(--rgb-error-color, 244, 67, 54), 0.2);
+        color: var(--error-color, #f44336);
       }
-      .metric-icon {
-        display: flex;
-        align-items: center;
+      .badge.info {
+        background-color: rgba(var(--rgb-info-color, 33, 150, 243), 0.15);
+        color: var(--info-color, #2196f3);
       }
 
-      /* Actions Row */
-      .device-actions-row {
-        display: flex;
+      /* Interactive Control Action Row */
+      .door-action-row {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
         gap: 8px;
-        padding-top: 4px;
-        border-top: 1px solid var(--divider-color, rgba(255, 255, 255, 0.05));
+        margin-top: 2px;
       }
-      .action-btn {
-        flex: 1;
-        display: inline-flex;
+      .control-btn {
+        display: flex;
         align-items: center;
-        justify-content: center;
-        gap: 6px;
-        padding: 7px 12px;
+        gap: 8px;
+        padding: 8px 12px;
         border-radius: 8px;
-        font-size: 0.82rem;
-        font-weight: 600;
-        border: none;
+        border: 1px solid var(--divider-color, rgba(255, 255, 255, 0.1));
+        background-color: rgba(255, 255, 255, 0.03);
+        color: var(--primary-text-color);
         cursor: pointer;
-        transition: all 0.2s ease;
-        color: var(--primary-text-color, #ffffff);
-        background: rgba(255, 255, 255, 0.08);
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        text-align: left;
       }
-      .action-btn:hover {
-        background: rgba(255, 255, 255, 0.15);
+      .control-btn:hover {
         transform: translateY(-1px);
       }
-      .action-btn.btn-mute {
-        color: #f1c40f;
-        background: rgba(241, 196, 15, 0.12);
-        border: 1px solid rgba(241, 196, 15, 0.25);
+      .control-btn.btn-mute:hover {
+        background-color: rgba(var(--rgb-warning-color, 255, 152, 0), 0.1);
+        border-color: var(--warning-color, #ff9800);
       }
-      .action-btn.btn-mute:hover {
-        background: rgba(241, 196, 15, 0.25);
+      .control-btn.btn-test:hover {
+        background-color: rgba(var(--rgb-primary-color, 33, 150, 243), 0.1);
+        border-color: var(--primary-color, #2196f3);
       }
-      .action-btn.btn-test {
-        color: #3498db;
-        background: rgba(52, 152, 219, 0.12);
-        border: 1px solid rgba(52, 152, 219, 0.25);
+      .control-btn.btn-drill:hover {
+        background-color: rgba(var(--rgb-error-color, 244, 67, 54), 0.15);
+        border-color: var(--error-color, #f44336);
       }
-      .action-btn.btn-test:hover {
-        background: rgba(52, 152, 219, 0.25);
+      .control-btn .btn-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 26px;
+        height: 26px;
+        border-radius: 50%;
+        background-color: rgba(255, 255, 255, 0.06);
+        flex-shrink: 0;
       }
-      .action-btn.btn-drill {
-        color: #e74c3c;
-        background: rgba(231, 76, 60, 0.12);
-        border: 1px solid rgba(231, 76, 60, 0.25);
+      .control-btn.btn-mute .btn-icon { color: var(--warning-color, #ff9800); }
+      .control-btn.btn-test .btn-icon { color: var(--info-color, #2196f3); }
+      .control-btn.btn-drill .btn-icon { color: var(--error-color, #f44336); }
+      .control-btn .btn-text {
+        display: flex;
+        flex-direction: column;
       }
-      .action-btn.btn-drill:hover {
-        background: rgba(231, 76, 60, 0.25);
+      .btn-action-label {
+        font-size: 12px;
+        font-weight: 600;
       }
-      .action-btn.loading {
+      .btn-sub-label {
+        font-size: 9px;
+        color: var(--secondary-text-color, #757575);
+      }
+      .control-btn.loading {
         opacity: 0.5;
         pointer-events: none;
       }
 
-      /* Drawer */
-      .device-drawer-toggle {
+      /* Collapsible Diagnostics Expander Bar matching Lock Manager */
+      .activity-expand-bar {
+        margin-top: 4px;
+        padding: 7px 10px;
+        border-radius: 8px;
+        border: 1px solid var(--divider-color, rgba(255, 255, 255, 0.08));
+        background-color: rgba(255, 255, 255, 0.02);
+        color: var(--primary-text-color);
+        cursor: pointer;
         display: flex;
         align-items: center;
         justify-content: space-between;
-        margin-top: 10px;
+        font-size: 11px;
+        font-weight: 500;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        user-select: none;
+      }
+      .activity-expand-bar:hover {
+        background-color: rgba(var(--rgb-primary-color, 33, 150, 243), 0.08);
+        border-color: var(--primary-color, #2196f3);
+      }
+      .activity-expand-bar.open {
+        border-color: var(--primary-color, #2196f3);
+        background-color: rgba(var(--rgb-primary-color, 33, 150, 243), 0.05);
+      }
+      .expand-bar-left {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .expand-chevron {
+        color: var(--primary-color, #2196f3);
+        display: flex;
+        align-items: center;
+      }
+
+      /* Event Feed Container matching Lock Manager */
+      .event-feed-container {
+        border-top: 1px solid var(--divider-color, rgba(255, 255, 255, 0.06));
         padding-top: 8px;
-        border-top: 1px dashed var(--divider-color, rgba(255, 255, 255, 0.05));
-        font-size: 0.75rem;
-        color: var(--secondary-text-color, rgba(255, 255, 255, 0.5));
-        cursor: pointer;
-        transition: color 0.2s;
       }
-      .device-drawer-toggle:hover {
-        color: var(--primary-text-color, #ffffff);
-      }
-      .device-drawer-content {
-        margin-top: 8px;
-        padding: 8px 10px;
-        border-radius: 6px;
-        background: rgba(0, 0, 0, 0.2);
+      .drawer-grid {
         display: flex;
         flex-direction: column;
         gap: 6px;
-        font-size: 0.78rem;
       }
-      .drawer-row {
+      .event-row {
         display: flex;
-        justify-content: space-between;
         align-items: center;
+        justify-content: space-between;
+        padding: 6px 10px;
+        border-radius: 6px;
+        background-color: rgba(255, 255, 255, 0.02);
+        border: 1px solid var(--divider-color, rgba(255, 255, 255, 0.05));
+      }
+      .event-details {
+        flex: 1;
+      }
+      .event-top-line {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .event-door-badge {
+        font-size: 10px;
+        font-weight: 600;
+        padding: 2px 6px;
+        border-radius: 4px;
+        background-color: var(--secondary-background-color, rgba(255, 255, 255, 0.06));
+        color: var(--secondary-text-color, #9e9e9e);
+        text-transform: uppercase;
+      }
+      .event-action {
+        font-size: 12px;
+        font-weight: 500;
       }
       .drawer-label {
-        color: var(--secondary-text-color, rgba(255, 255, 255, 0.6));
-      }
-      .drawer-value {
-        font-weight: 500;
+        font-size: 12px;
+        color: var(--primary-text-color);
       }
       .switch-pill {
         border: none;
-        padding: 3px 8px;
+        padding: 3px 10px;
         border-radius: 12px;
-        font-size: 0.72rem;
+        font-size: 11px;
         font-weight: 700;
         cursor: pointer;
-        background: rgba(255, 255, 255, 0.1);
-        color: var(--secondary-text-color, rgba(255, 255, 255, 0.6));
+        background: rgba(255, 255, 255, 0.08);
+        color: var(--secondary-text-color, #9e9e9e);
+        transition: all 0.2s;
       }
       .switch-pill.active {
-        background: var(--primary-color, #3498db);
+        background: var(--primary-color, #2196f3);
         color: white;
       }
 
-      /* Confirmation Modal */
+      /* Modal Confirmation matching Lock Manager */
       .modal-overlay {
         position: fixed;
         top: 0;
@@ -987,7 +1143,7 @@ export class PassableSafetyCard extends LitElement {
       .modal-card {
         background: var(--ha-card-background, #1c1c1e);
         border: 1px solid rgba(255, 255, 255, 0.15);
-        border-radius: 14px;
+        border-radius: 12px;
         padding: 20px;
         max-width: 360px;
         width: 90%;
@@ -1000,15 +1156,15 @@ export class PassableSafetyCard extends LitElement {
         margin-bottom: 12px;
       }
       .modal-icon-alert {
-        color: #e74c3c;
+        color: var(--error-color, #f44336);
       }
       .modal-title {
-        font-size: 1.1rem;
+        font-size: 16px;
         font-weight: 600;
       }
       .modal-body {
-        font-size: 0.9rem;
-        color: var(--secondary-text-color, rgba(255, 255, 255, 0.8));
+        font-size: 13px;
+        color: var(--secondary-text-color, #9e9e9e);
         margin-bottom: 18px;
         line-height: 1.4;
       }
@@ -1019,8 +1175,8 @@ export class PassableSafetyCard extends LitElement {
       }
       .btn {
         padding: 8px 16px;
-        border-radius: 8px;
-        font-size: 0.85rem;
+        border-radius: 6px;
+        font-size: 13px;
         font-weight: 600;
         border: none;
         cursor: pointer;
@@ -1030,15 +1186,19 @@ export class PassableSafetyCard extends LitElement {
         color: white;
       }
       .btn-danger {
-        background: #e74c3c;
+        background: var(--error-color, #f44336);
         color: white;
       }
 
-      /* Keyframe Animations */
+      /* Animations */
+      @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(4px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
       @keyframes pulseAlert {
-        0% { box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.5); }
-        70% { box-shadow: 0 0 0 10px rgba(231, 76, 60, 0); }
-        100% { box-shadow: 0 0 0 0 rgba(231, 76, 60, 0); }
+        0% { box-shadow: 0 0 0 0 rgba(244, 67, 54, 0.5); }
+        70% { box-shadow: 0 0 0 8px rgba(244, 67, 54, 0); }
+        100% { box-shadow: 0 0 0 0 rgba(244, 67, 54, 0); }
       }
     `;
   }
@@ -1058,8 +1218,7 @@ export class PassableSafetyCardEditor extends LitElement {
     super();
     this._expandedSections = {
       card_settings: true,
-      discovery_settings: false,
-      exclusions: false
+      discovery_settings: false
     };
   }
 
@@ -1104,7 +1263,6 @@ export class PassableSafetyCardEditor extends LitElement {
 
     return html`
       <div class="editor-container">
-        <!-- Card Settings Section -->
         <div class="section-card">
           <div class="section-header" @click=${() => this._toggleSection('card_settings')}>
             <span>Card Header Settings</span>
@@ -1123,6 +1281,15 @@ export class PassableSafetyCardEditor extends LitElement {
 
               <ha-selector
                 .hass=${this.hass}
+                .selector=${{ text: {} }}
+                .value=${this.config.subtitle || 'Safety & Life Protection Command Center'}
+                .label=${'Subtitle'}
+                .configValue=${'subtitle'}
+                @value-changed=${this._valueChanged}
+              ></ha-selector>
+
+              <ha-selector
+                .hass=${this.hass}
                 .selector=${{ icon: {} }}
                 .value=${this.config.icon || 'mdi:fire-alert'}
                 .label=${'Header Icon'}
@@ -1134,7 +1301,7 @@ export class PassableSafetyCardEditor extends LitElement {
                 .hass=${this.hass}
                 .selector=${{ boolean: {} }}
                 .value=${this.config.show_summary_banner !== false}
-                .label=${'Show Aggregate Status Summary Banner'}
+                .label=${'Show Hero Status Summary Grid'}
                 .configValue=${'show_summary_banner'}
                 @value-changed=${this._valueChanged}
               ></ha-selector>
@@ -1142,17 +1309,8 @@ export class PassableSafetyCardEditor extends LitElement {
               <ha-selector
                 .hass=${this.hass}
                 .selector=${{ boolean: {} }}
-                .value=${this.config.show_battery_gauges !== false}
-                .label=${'Show Battery Health / Percentages'}
-                .configValue=${'show_battery_gauges'}
-                @value-changed=${this._valueChanged}
-              ></ha-selector>
-
-              <ha-selector
-                .hass=${this.hass}
-                .selector=${{ boolean: {} }}
                 .value=${this.config.confirm_drills !== false}
-                .label=${'Require Confirmation Before Triggering Alarm Drills'}
+                .label=${'Confirm Before Triggering Alarm Drills'}
                 .configValue=${'confirm_drills'}
                 @value-changed=${this._valueChanged}
               ></ha-selector>
@@ -1160,7 +1318,6 @@ export class PassableSafetyCardEditor extends LitElement {
           ` : ''}
         </div>
 
-        <!-- Discovery Settings -->
         <div class="section-card">
           <div class="section-header" @click=${() => this._toggleSection('discovery_settings')}>
             <span>Auto-Discovery Options</span>
@@ -1235,7 +1392,6 @@ if (!customElements.get("passable-safety-card")) {
   customElements.define("passable-safety-card", PassableSafetyCard);
 }
 
-// Legacy alias definitions
 if (!customElements.get("safety-card")) {
   class LegacySafetyCard extends PassableSafetyCard {}
   customElements.define("safety-card", LegacySafetyCard);

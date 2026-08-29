@@ -1,7 +1,7 @@
 # Passable Safety Card
 
 [![hacs_badge](https://img.shields.io/badge/HACS-Custom-orange.svg)](https://github.com/hacs/default)
-[![version](https://img.shields.io/badge/version-v1.0.0-blue.svg)](https://github.com/GBear09/passable-safety-card/releases)
+[![version](https://img.shields.io/badge/version-v1.0.1-blue.svg)](https://github.com/GBear09/passable-safety-card/releases)
 [![license](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
 A flexible, high-performance universal safety command center card for Home Assistant Lovelace dashboards. Designed specifically for monitoring and controlling smart **Smoke and Carbon Monoxide Detectors** (such as X-Sense, Nest Protect, First Alert, and any Zigbee/Z-Wave/Matter safety sensors) with **100% dynamic auto-discovery**.
@@ -41,7 +41,7 @@ A flexible, high-performance universal safety command center card for Home Assis
 2. Upload `passable-safety-card.js` into your Home Assistant `/config/www/` directory.
 3. In Home Assistant, navigate to **Settings** -> **Dashboards** -> **Three Dots (top right)** -> **Resources**.
 4. Click **Add Resource** and set:
-   - **Url**: `/local/passable-safety-card.js?v=1.0.0`
+   - **Url**: `/local/passable-safety-card.js?v=1.0.1`
    - **Resource Type**: `JavaScript Module`
 5. Refresh your browser page.
 

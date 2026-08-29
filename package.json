@@ -1,6 +1,6 @@
 {
   "name": "passable-safety-card",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Dynamic Home Assistant Lovelace safety command center for Smoke & CO detectors with auto-discovery, live diagnostics, and integrated controls.",
   "main": "passable-safety-card.js",
   "repository": {
