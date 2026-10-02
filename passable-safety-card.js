@@ -1,22 +1,22 @@
 /**
  * Passable Safety Card
  * Dynamic Smoke & CO Safety Command Center with Auto-Discovery, Diagnostics, and Controls.
- * Version 1.0.1
+ * Version 1.0.2
  * (c) 2026 GBear09
  */
 
-import {
-  LitElement,
-  html,
-  css,
-} from "https://unpkg.com/lit@3.0.0/index.js?module";
+const CARD_VERSION = "1.0.2";
 
-const CARD_VERSION = "1.0.1";
+const LitElement = Object.getPrototypeOf(
+  customElements.get("hui-entities-card")
+);
+const html = LitElement.prototype.html;
+const css = LitElement.prototype.css;
 
 console.info(
-  `%c PASSABLE-SAFETY-CARD %c v${CARD_VERSION} `,
-  "color: white; background: #2196f3; font-weight: bold; padding: 2px 6px; border-radius: 3px 0 0 3px;",
-  "color: white; background: #10b981; font-weight: bold; padding: 2px 6px; border-radius: 0 3px 3px 0;"
+  `%c PASSABLE-SAFETY-CARD %c v${CARD_VERSION} IS LOADED `,
+  "color: white; background: #0284c7; font-weight: bold; padding: 2px 6px; border-radius: 4px 0 0 4px;",
+  "color: #0284c7; background: #e0f2fe; font-weight: bold; padding: 2px 6px; border-radius: 0 4px 4px 0;"
 );
 
 // --- INLINE ICONS (Lucide & MDI matching Lock Manager Card) ---
@@ -67,6 +67,10 @@ export class PassableSafetyCard extends LitElement {
       _confirmDialog: { type: Object },
       _actionLoading: { type: Object }
     };
+  }
+
+  static getConfigElement() {
+    return document.createElement("passable-safety-card-editor");
   }
 
   constructor() {
@@ -371,8 +375,11 @@ export class PassableSafetyCard extends LitElement {
         <div class="view fade-in">
           <!-- Main Card Header matching Lock Manager -->
           <div class="header">
-            <div>
-              <h1 class="title">${title}</h1>
+            <div class="header-left">
+              <h1 class="title">
+                <ha-icon icon="mdi:shield-check" style="margin-right: 8px; color: var(--primary-color);"></ha-icon>
+                ${title}
+              </h1>
               <p class="subtitle">${subtitle}</p>
             </div>
 
@@ -666,11 +673,11 @@ export class PassableSafetyCard extends LitElement {
       }
       ha-card {
         padding: 16px;
-        background: var(--ha-card-background, var(--card-background-color, #1e1e24));
+        background: var(--ha-card-background, var(--card-background-color, #fff));
         border-radius: var(--ha-card-border-radius, 12px);
         border: 1px solid var(--divider-color, rgba(255, 255, 255, 0.08));
         box-shadow: var(--ha-card-box-shadow, 0 4px 20px rgba(0, 0, 0, 0.25));
-        color: var(--primary-text-color, #ffffff);
+        color: var(--primary-text-color, #212121);
         position: relative;
         overflow: hidden;
         font-family: var(--paper-font-body1_-_font-family, system-ui, -apple-system, sans-serif);
@@ -689,19 +696,29 @@ export class PassableSafetyCard extends LitElement {
       .header {
         display: flex;
         justify-content: space-between;
-        align-items: flex-start;
+        align-items: flex-end;
+        border-bottom: 1px solid var(--divider-color, #e0e0e0);
+        padding-bottom: 16px;
+        margin-bottom: 16px;
+      }
+      .header-left {
+        display: flex;
+        flex-direction: column;
       }
       .title {
-        font-size: 20px;
-        font-weight: 600;
+        font-size: 24px;
+        font-weight: 500;
         letter-spacing: -0.01em;
         margin: 0;
         color: var(--primary-text-color);
+        display: flex;
+        align-items: center;
       }
       .subtitle {
-        font-size: 12px;
+        font-size: 14px;
         color: var(--secondary-text-color, #757575);
-        margin: 2px 0 0 0;
+        margin: 0;
+        margin-top: 4px;
       }
       .header-right {
         display: flex;
@@ -827,7 +844,7 @@ export class PassableSafetyCard extends LitElement {
       /* Door/Detector Card matching Lock Manager */
       .door-card {
         padding: 14px;
-        border-radius: var(--ha-card-border-radius, 8px);
+        border-radius: var(--ha-card-border-radius, 12px);
         background-color: var(--secondary-background-color, rgba(255, 255, 255, 0.02));
         border: 1px solid var(--divider-color, rgba(255, 255, 255, 0.08));
         transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
