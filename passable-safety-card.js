@@ -1158,8 +1158,8 @@ export class PassableSafetyCard extends LitElement {
         backdrop-filter: blur(4px);
       }
       .modal-card {
-        background: var(--ha-card-background, #1c1c1e);
-        border: 1px solid rgba(255, 255, 255, 0.15);
+        background: var(--ha-card-background, var(--card-background-color, #fff));
+        border: 1px solid var(--ha-card-border-color, var(--divider-color, rgba(0, 0, 0, 0.12)));
         border-radius: 12px;
         padding: 20px;
         max-width: 360px;
