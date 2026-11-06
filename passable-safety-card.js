@@ -5,7 +5,7 @@
  * (c) 2026 GBear09
  */
 
-const CARD_VERSION = "1.0.2";
+const CARD_VERSION = "1.0.3";
 
 const LitElement = Object.getPrototypeOf(
   customElements.get("hui-entities-card")
@@ -118,6 +118,10 @@ export class PassableSafetyCard extends LitElement {
       return this.config.devices;
     }
 
+    const stateCount = Object.keys(this.hass.states).length;
+    if (this._cachedDevices && this._cachedConfig === this.config && this._cachedStateCount === stateCount) {
+      return this._cachedDevices;
+    }
     const excludeList = this.config.exclude_entities || [];
     const devicesMap = new Map();
 
@@ -243,7 +247,10 @@ export class PassableSafetyCard extends LitElement {
       }
     }
 
-    return Array.from(devicesMap.values());
+    this._cachedDevices = Array.from(devicesMap.values());
+    this._cachedConfig = this.config;
+    this._cachedStateCount = stateCount;
+    return this._cachedDevices;
   }
 
   // --- ACTIONS ---
