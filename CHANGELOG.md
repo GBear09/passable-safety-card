@@ -5,6 +5,11 @@ All notable changes to **Passable Safety Card** will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.1] - 2026-11-26
+
+### Changed
+- **Passable Dropdown Controls**: Replaced pill rows for Base Station & Detector Alarm Tone, SBS50 LED Brightness, and Nest Protect Night Light Brightness with clean `.passable-select-row` dropdown selectors aligned with `passable-appliance-card` and `passable-vacuum-card`.
+
 ## [2.0.0] - 2026-11-26
 
 ### Added

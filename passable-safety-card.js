@@ -1,6 +1,6 @@
 /**
  * Passable Safety Card
- * Version: 2.0.0
+ * Version: 2.0.1
  * GitHub: https://github.com/GBear09/passable-safety-card
  *
  * Passable design-system Smoke & CO Safety Command Center with dynamic auto-discovery
@@ -9,7 +9,7 @@
  * popup and inline "full" Command Center mode (ideal for dashboards or browser_mod popups).
  */
 
-const CARD_VERSION = "2.0.0";
+const CARD_VERSION = "2.0.1";
 
 const SAFETY_TABS = [
   { id: "overview", label: "Overview", icon: "mdi:shield-home" },
@@ -2049,23 +2049,33 @@ export class PassableSafetyCard extends LitElement {
   }
 
   _renderSelectChips(label, entityId, stateObj, prefix = "") {
-    const opts = stateObj.attributes?.options || [];
+    const rawOpts = stateObj.attributes?.options || [];
+    const opts = rawOpts.filter((o) => !["unknown", "unavailable"].includes(String(o).toLowerCase()));
     if (opts.length === 0) return "";
+    const curValid = opts.includes(stateObj.state) ? stateObj.state : opts[0];
+    const icon = label.toLowerCase().includes("tone")
+      ? "mdi:bell-ring-outline"
+      : label.toLowerCase().includes("led") || label.toLowerCase().includes("brightness")
+      ? "mdi:brightness-6"
+      : "mdi:tune";
     return html`
-      <div class="chip-select-block">
-        <span class="chip-select-label">${label}</span>
-        <div class="chip-select-row">
-          ${opts.map(
-            (opt) => html`
-              <button
-                type="button"
-                class="opt-chip ${stateObj.state === opt ? "active" : ""}"
-                @click=${(e) => this._setSelect(entityId, opt, e)}
-              >
-                ${prefix}${String(opt).replace(/\b\w/g, (l) => l.toUpperCase())}
-              </button>
-            `
-          )}
+      <div class="passable-select-row">
+        <div class="select-row-label">
+          <ha-icon icon="${icon}" style="--mdc-icon-size:17px; color:var(--primary-color);"></ha-icon>
+          <span>${label}</span>
+        </div>
+        <div class="select-wrap">
+          <select
+            class="passable-select"
+            aria-label="${label}"
+            .value=${String(curValid)}
+            @change=${(e) => this._setSelect(entityId, e.target.value, e)}
+          >
+            ${opts.map(
+              (opt) => html`<option value="${opt}" ?selected=${opt === curValid}>${prefix}${String(opt).replace(/\b\w/g, (l) => l.toUpperCase())}</option>`
+            )}
+          </select>
+          <ha-icon icon="mdi:chevron-down" class="select-chevron"></ha-icon>
         </div>
       </div>
     `;
@@ -3110,38 +3120,51 @@ export class PassableSafetyCard extends LitElement {
         cursor: pointer;
       }
 
-      .chip-select-block {
+      .passable-select-row {
         display: flex;
-        flex-direction: column;
-        gap: 5px;
-      }
-      .chip-select-label {
-        font-size: 12px;
-        font-weight: 600;
-        color: var(--secondary-text-color);
-      }
-      .chip-select-row {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 6px;
-      }
-      .opt-chip {
-        flex: 1;
-        min-width: 60px;
-        padding: 6px 10px;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        padding: 7px 9px;
         border-radius: 10px;
-        border: 1px solid var(--divider-color);
         background: var(--card-background-color, #fff);
+        border: 1px solid var(--divider-color, rgba(128, 128, 128, 0.18));
+        font-size: 12.5px;
+      }
+      .select-row-label {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        font-weight: 600;
+        min-width: 0;
+      }
+      .select-wrap {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        flex-shrink: 0;
+      }
+      .passable-select {
+        appearance: none;
+        -webkit-appearance: none;
+        padding: 6px 28px 6px 10px;
+        border-radius: 9px;
+        border: 1px solid var(--divider-color, rgba(128, 128, 128, 0.22));
+        background: var(--secondary-background-color, rgba(128, 128, 128, 0.1));
         color: var(--primary-text-color);
         font-family: inherit;
-        font-size: 12px;
-        font-weight: 600;
+        font-size: 12.5px;
+        font-weight: 700;
         cursor: pointer;
+        max-width: 210px;
+        text-overflow: ellipsis;
       }
-      .opt-chip.active {
-        background: var(--primary-color, #3b82f6);
-        border-color: var(--primary-color, #3b82f6);
-        color: var(--text-primary-color, #ffffff);
+      .select-chevron {
+        position: absolute;
+        right: 7px;
+        pointer-events: none;
+        color: var(--secondary-text-color);
+        --mdc-icon-size: 16px;
       }
 
       .component-test-grid {
